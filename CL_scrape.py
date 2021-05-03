@@ -128,6 +128,49 @@ def parse_edison_department_contacts():
         print(row)
 
 
+# I am unable to scrape the county news using beautiful soup, because the 
+#   data is loaded onto the page through additional browser requests. I
+#   would need to use selenium or another advanced tool to properly scrape the 
+#   site. So right now the data was scraped manually.
+def scrape_middlesex_county_news():
+    web_data = request.urlopen('http://www.middlesexcountynj.gov/News/Pages/default.aspx')
+
+    parsed_data = BeautifulSoup(web_data, 'html.parser')
+
+    # Needed to add the encoding to write the data
+    file = open('./scraped_html/middlesex_county_news.html', 'w', encoding='utf-8')
+    
+    file.write(str(parsed_data))
+
+    file.close()
+
+def parse_middlesex_county_news():
+    web_page = open('./scraped_html/middlesex_county_news.html')
+
+    parsed_data = BeautifulSoup(web_page, 'html.parser')
+
+    news_items = parsed_data.find_all('div', class_='news')
+
+    middlesex_county_news = []
+
+    for item in news_items:
+        data = {}
+        # print()
+        # print(item.h4.a.get_text())
+        # print('http://www.middlesexcountynj.gov' + item.h4.a['href'])
+        # print(item.span.get_text())
+
+        data['text'] = item.h4.a.get_text()
+        data['link'] = 'http://www.middlesexcountynj.gov' + item.h4.a['href']
+        data['date'] = item.span.get_text()
+
+        middlesex_county_news.append(data)
+    
+    return middlesex_county_news
+
+
+
+
 if __name__ == '__main__':
     # scrape_edison_town_meetings()
     # parse_edison_town_meetings()
@@ -136,4 +179,9 @@ if __name__ == '__main__':
     # parse_edison_department_contacts()
 
     # scrape_state_news()
-    parse_state_news()
+    # parse_state_news()
+
+    # scrape_middlesex_county_news()
+    # parse_middlesex_county_news()
+
+    print(parse_middlesex_county_news())
