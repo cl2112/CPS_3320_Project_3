@@ -86,10 +86,25 @@ def scrape_edison_town_meetings():
 def parse_edison_town_meetings():
     web_page = open('./scraped_html/edison_town_meeting.html')
 
-    parsed_data = BeautifulSoup(web_page, 'html.parser').select('div.post')
+    parsed_data = BeautifulSoup(web_page, 'html.parser').table.find_all('tr')
 
-    for element in parsed_data:
-        print(element.get_text())
+    meeting_info = []
+    
+    for row in parsed_data:
+        row_data = []
+        for entry in row.find_all('td'):
+            text = entry.text.replace('\xa0', '')
+            
+            if entry.a:
+                text = entry.a['href']
+            
+            if text != '':
+                row_data.append(text)
+
+        if row_data != []:
+            meeting_info.append(row_data)
+
+    return meeting_info
 
 def scrape_edison_department_contacts():
     web_data = request.urlopen('https://edisonnj.org/how_do_i/contact_us.php')
@@ -124,8 +139,10 @@ def parse_edison_department_contacts():
         table.append(data)
                 
 
-    for row in table:
-        print(row)
+    # for row in table:
+    #     print(row)
+
+    return table
 
 
 # I am unable to scrape the county news using beautiful soup, because the 
@@ -184,4 +201,6 @@ if __name__ == '__main__':
     # scrape_middlesex_county_news()
     # parse_middlesex_county_news()
 
-    print(parse_middlesex_county_news())
+    # print(parse_middlesex_county_news())
+    # print(parse_edison_department_contacts())
+    print(parse_edison_town_meetings())

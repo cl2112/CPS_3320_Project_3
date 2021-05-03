@@ -75,6 +75,8 @@ def make_town_window():
 
     return sg.Window('Get Involved NJ - Town Information', layout, size=(720, 540), finalize=True, margins=(0,0), background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
 
+
+
 def make_county_window():
     county_news = scrape.parse_middlesex_county_news()
 
@@ -109,9 +111,69 @@ def make_county_window():
 
 
 
+def make_town_department_window():
+    town_dept_contacts = scrape.parse_edison_department_contacts()
+
+    town_dept_contacts_content = []
+    town_dept_contacts_content.append([sg.Text('Edison Township Dept. Info')])
+
+    for table_entry in town_dept_contacts:
+        row = []
+        
+        for item in table_entry:
+            row.append(sg.Text(item))
+        
+
+        town_dept_contacts_content.append([sg.Column([row])])
+        town_dept_contacts_content.append([sg.HorizontalSeparator()])
+
+
+    layout = [
+        layouts.create_top_banner(),
+        layouts.create_heading(),
+        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        [sg.Column(town_dept_contacts_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
+        layouts.create_footer()
+    ]
+
+    return sg.Window('Get Involved NJ - County Information', layout, size=(720, 540), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+
+
+def make_town_meeting_window():
+    town_meetings = scrape.parse_edison_town_meetings()
+
+    town_meetings_content = []
+    town_meetings_content.append([sg.Text('Edison Township Meeting Info')])
+
+    for table_entry in town_meetings:
+        row = []
+        
+        row.append([sg.Text(table_entry[0]), sg.Text(table_entry[1])])
+        row.append([sg.Text(table_entry[2])])
+        row.append([sg.Text('Meeting ID: ' + table_entry[3])])
+        row.append([sg.Text('Passcode: ' + table_entry[4])])
+        
+
+        town_meetings_content.append([sg.Column(row)])
+        town_meetings_content.append([sg.HorizontalSeparator()])
+
+
+    layout = [
+        layouts.create_top_banner(),
+        layouts.create_heading(),
+        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        [sg.Column(town_meetings_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
+        layouts.create_footer()
+    ]
+
+    return sg.Window('Get Involved NJ - County Information', layout, size=(720, 540), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+
+
 
 def main():
     # Design pattern 1 - First window does not remain active
+    win_town_meetings = None
+    win_town_dept = None
     window3 = None
     window2 = None
     window1 = make_main_window()
@@ -136,6 +198,7 @@ def main():
             window2.hide()
             window3 = make_town_window()
 
+
         if window == window2 and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
             window2.close()
             window2 = None
@@ -146,6 +209,23 @@ def main():
             window3 = None
             window2.un_hide()
 
+        if window == window3 and event == 'Dept. Info':
+            window3.hide()
+            win_town_dept = make_town_department_window()
+
+        if window in (window3, win_town_dept) and event == 'Town Meeting Info':
+            window.hide()
+            win_town_meetings = make_town_meeting_window()
+
+        if window == win_town_dept and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
+            win_town_dept.close()
+            win_town_dept = None
+            window3.un_hide()
+
+        if window == win_town_meetings and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
+            win_town_meetings.close()
+            win_town_meetings = None
+            window3.un_hide()
         
     window1.close()
 
