@@ -1,4 +1,3 @@
-from datetime import time
 import PySimpleGUI as sg
 
 import CL_layouts as layouts
@@ -15,8 +14,6 @@ theme_dict = {'BACKGROUND': '#2B475D',
                 'BORDER': 1,'SLIDER_DEPTH': 0, 'PROGRESS_DEPTH': 0}
 
 sg.theme_add_new('Dashboard', theme_dict)     # if using 4.20.0.1+
-# sg.LOOK_AND_FEEL_TABLE['Dashboard'] = theme_dict
-# sg.theme('Dashboard')
 
 BORDER_COLOR = '#C7D5E0'
 DARK_HEADER_COLOR = '#1B2838'
@@ -77,30 +74,6 @@ def make_town_window():
 
     return sg.Window('Get Involved NJ - Town Information', layout, size=(720, 540), finalize=True, margins=(0,0), background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
 
-
-
-# def main():
-#     # window variables
-#     win_town = None
-#     win_main = sg.Window([[sg.Text("HERERERER")]], finalize=True)
-
-
-#     while True:             # Event Loop
-#         # window, event, values = sg.read_all_windows(timeout=100) # read all events from all windows
-
-#         window, event, values = sg.read_all_windows(timeout=100)
-        
-#         # if event in (sg.WIN_CLOSED, 'Exit', 'Quit'):
-#         #     break
-    
-
-#         print(window, event, values)
-
-
-#     win_main.close()
-
-
-# main()
 
 def main():
     # Design pattern 1 - First window does not remain active
