@@ -50,7 +50,7 @@ def make_main_window():
     layout = [
         layouts.create_top_banner(),
         layouts.create_heading(),
-        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        [[sg.Text('Counties')], [sg.Button('Middlesex')]],
         [sg.Column(state_news_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -75,14 +75,50 @@ def make_town_window():
 
     return sg.Window('Get Involved NJ - Town Information', layout, size=(720, 540), finalize=True, margins=(0,0), background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
 
+def make_county_window():
+    county_news = scrape.parse_middlesex_county_news()
+
+    county_news_content = []
+    county_news_content.append([sg.Text('Middlesex County News')])
+
+    for story in county_news:
+        row = []
+        row.append([sg.Text(story['date'])])
+        chara_count = 0
+        while chara_count < len(story['text']):
+            cut_text = story['text'][chara_count: chara_count+100]
+            # print('\nstory', story['text'], '\ncut_text', cut_text)
+        
+            row.append(
+                [sg.Text(cut_text)]
+            )
+            chara_count += 100
+
+        county_news_content.append([sg.Column(row)])
+        county_news_content.append([sg.HorizontalSeparator()])
+
+    layout = [
+        layouts.create_top_banner(),
+        layouts.create_heading(),
+        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        [sg.Column(county_news_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
+        layouts.create_footer()
+    ]
+
+    return sg.Window('Get Involved NJ - County Information', layout, size=(720, 540), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+
+
+
 
 def main():
     # Design pattern 1 - First window does not remain active
+    window3 = None
     window2 = None
     window1 = make_main_window()
 
     while True:
-        window, event, values = sg.read_all_windows()
+        window, event, values = sg.read_all_windows(timeout=100)
+
         if event in (sg.WIN_CLOSED, 'Quit') and window == window1:
             break
 
@@ -90,14 +126,27 @@ def main():
             # window1['-OUTPUT-'].update(values['-IN-'])
             pass
 
-        if event == 'Edison' and not window2:
+        if event == 'Middlesex' and not window2 and not window3:
             window1.hide()
-            window2 = make_town_window()
+            window2 = make_county_window()
+            print(window2)
 
-        if window == window2 and (event in (sg.WIN_CLOSED, 'Exit', 'Home')):
+        if event == 'Edison':
+            print(window, event)
+            window2.hide()
+            window3 = make_town_window()
+
+        if window == window2 and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
             window2.close()
             window2 = None
             window1.un_hide()
+
+        if window == window3 and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
+            window3.close()
+            window3 = None
+            window2.un_hide()
+
+        
     window1.close()
 
 
