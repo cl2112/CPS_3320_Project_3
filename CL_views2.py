@@ -32,6 +32,7 @@ def make_main_window():
     
     for story in state_news:
         row = []
+        row.append([sg.Text(story['date'])])
         chara_count = 0
         while chara_count < len(story['text']):
             cut_text = story['text'][chara_count: chara_count+80]
