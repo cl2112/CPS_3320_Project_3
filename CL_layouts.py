@@ -12,7 +12,6 @@
 # Library Imports
 #===============================================================================
 # The PySimpleGUI library used to render GUIs
-from tkinter import font
 import PySimpleGUI as sg
 #===============================================================================
 

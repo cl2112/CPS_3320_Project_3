@@ -11,15 +11,22 @@
 #===============================================================================
 # Library Imports
 #===============================================================================
+# The PySimpleGUI library used to render GUIs
+from tkinter import font
 import PySimpleGUI as sg
-from PySimpleGUI.PySimpleGUI import Column
 
+# Importing the layout functions that create layout pieces
 import CL_layouts as layouts
 
+# Importing the scrape functions that scrape and parse the web data
 import CL_scrape as scrape
+
+import time
 #===============================================================================
 
 
+#===============================================================================
+# Theme for the app. Sets the default styling of the app.
 #===============================================================================
 theme_dict = {'BACKGROUND': '#2B475D',
                 'TEXT': '#FFFFFF',
@@ -30,10 +37,14 @@ theme_dict = {'BACKGROUND': '#2B475D',
                 'PROGRESS': ('#FFFFFF', '#C7D5E0'),
                 'BORDER': 1,'SLIDER_DEPTH': 0, 'PROGRESS_DEPTH': 0}
 
+# Adding the styling as a theme for the app
 sg.theme_add_new('Dashboard', theme_dict) 
 #===============================================================================
 
 
+#===============================================================================
+# The color scheme for the GUI. Taken from a PySimpleGUI example.
+#===============================================================================
 BORDER_COLOR = '#C7D5E0'
 DARK_HEADER_COLOR = '#1B2838'
 BPAD_TOP = ((20,20), (20, 10))
@@ -45,13 +56,13 @@ BPAD_RIGHT = ((10,20), (10, 20))
 
 
 #===============================================================================
-
+# Window creation functions
 #===============================================================================
+# Function to make the main window, which defaults to the state news info.
 def make_main_window():
     state_news = scrape.parse_state_news()
 
     state_news_content = []
-    # state_news_content.append([sg.Text('New Jersey State News', font='Any 20')])
     
     for story in state_news:
         row = []
@@ -72,7 +83,6 @@ def make_main_window():
 
     layout = [
         layouts.create_top_banner(),
-        # layouts.create_heading(),
         [
             sg.Column([
                 [sg.Column([
@@ -93,40 +103,7 @@ def make_main_window():
 
 
 #===============================================================================
-
-def make_town_news_window():
-    content = []
-
-    Edison = scrape.parse_edison_news()
-
-    for story in Edison:
-        content.append([sg.Text(story['text'])])
-
-    layout = [
-        layouts.create_top_banner(),
-        [
-            sg.Column([[
-                sg.Column([
-                    [sg.Text('Edison', font='Any 16')]
-                ], expand_x=True),
-
-                sg.Column([
-                    [sg.Button('News'), 
-                    sg.Button('Dept. Info'), 
-                    sg.Button('Town Meeting Info')]
-                ])
-            ]], expand_x=True)
-        ],
-        [sg.Column([[sg.Text('Edison Township News', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
-        [sg.Column(content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
-        layouts.create_footer()
-    ]
-
-    return sg.Window('Get Involved NJ - Town Information', layout, size=(720, 540), finalize=True, margins=(0,0), background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
-#===============================================================================
-
-
-#===============================================================================
+# Function to make the county window that contains the county news.
 def make_county_window():
     county_news = scrape.parse_middlesex_county_news()
 
@@ -169,6 +146,43 @@ def make_county_window():
 
     return sg.Window('Get Involved NJ - County Information', layout, size=(720, 540), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
 #===============================================================================
+
+
+#===============================================================================
+# Function to make the town news window, which is the default window for towns.
+def make_town_news_window():
+    content = []
+
+    Edison = scrape.parse_edison_news()
+
+    for story in Edison:
+        content.append([sg.Text(story['text'])])
+
+    layout = [
+        layouts.create_top_banner(),
+        [
+            sg.Column([[
+                sg.Column([
+                    [sg.Text('Edison', font='Any 16')]
+                ], expand_x=True),
+
+                sg.Column([
+                    [sg.Button('News'), 
+                    sg.Button('Dept. Info'), 
+                    sg.Button('Town Meeting Info')]
+                ])
+            ]], expand_x=True)
+        ],
+        [sg.Column([[sg.Text('Edison Township News', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
+        [sg.Column(content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
+        layouts.create_footer()
+    ]
+
+    return sg.Window('Get Involved NJ - Town Information', layout, size=(720, 540), finalize=True, margins=(0,0), background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+#===============================================================================
+
+
+
 
 
 #===============================================================================
@@ -259,64 +273,89 @@ def make_town_meeting_window():
 
 
 #===============================================================================
+def make_progress_window():
+
+    layout = [
+        [sg.Column([
+            [sg.Text('Gathering data...', font='Any 20')],
+            [sg.Text('Please wait.', font='Any 20')],
+        ], expand_x=True, expand_y=True, element_justification='center')],
+        
+        [sg.ProgressBar(len(scrape.scrape_functions) - 1, key='PROGRESS_BAR', size=(100, 20))]
+    ]
+
+    return sg.Window('Get Involved NJ - County Information', layout, size=(360, 150), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+
+#===============================================================================
+
+
+#===============================================================================
 def main():
-    # Design pattern 1 - First window does not remain active
     win_town_meetings = None
     win_town_dept = None
-    window3 = None
-    window2 = None
-    window1 = make_main_window()
+    win_town_news = None
+    win_county = None
+    win_main = None
+    win_progress = make_progress_window()
+
+    for i in range(len(scrape.scrape_functions)):
+        scrape.scrape_functions[i]()
+        win_progress['PROGRESS_BAR'].update(i)
+        time.sleep(1)
+
+    win_progress.hide()
+    win_main = make_main_window()
+    win_progress = None
 
     while True:
         window, event, values = sg.read_all_windows(timeout=100)
 
-        if event in (sg.WIN_CLOSED, 'Quit') and window == window1:
+        if event in (sg.WIN_CLOSED, 'Quit') and window == win_main:
             break
 
-        if window == window1:
-            # window1['-OUTPUT-'].update(values['-IN-'])
+        if window == win_main:
             pass
 
-        if event == 'Middlesex' and not window2 and not window3:
-            window1.hide()
-            window2 = make_county_window()
-            print(window2)
+        if event == 'Middlesex' and not win_county and not win_town_news:
+            win_main.hide()
+            win_county = make_county_window()
+            print(win_county)
 
         if event == 'Edison':
             print(window, event)
-            window2.hide()
-            window3 = make_town_news_window()
+            win_county.hide()
+            win_town_news = make_town_news_window()
 
 
-        if window == window2 and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
-            window2.close()
-            window2 = None
-            window1.un_hide()
+        if window == win_county and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
+            win_county.close()
+            win_county = None
+            win_main.un_hide()
 
-        if window == window3 and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
-            window3.close()
-            window3 = None
-            window2.un_hide()
+        if window == win_town_news and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
+            win_town_news.close()
+            win_town_news = None
+            win_county.un_hide()
 
-        if window == window3 and event == 'Dept. Info':
-            window3.hide()
+        if window == win_town_news and event == 'Dept. Info':
+            win_town_news.hide()
             win_town_dept = make_town_department_window()
 
-        if window in (window3, win_town_dept) and event == 'Town Meeting Info':
+        if window in (win_town_news, win_town_dept) and event == 'Town Meeting Info':
             window.hide()
             win_town_meetings = make_town_meeting_window()
 
         if window == win_town_dept and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
             win_town_dept.close()
             win_town_dept = None
-            window3.un_hide()
+            win_town_news.un_hide()
 
         if window == win_town_meetings and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
             win_town_meetings.close()
             win_town_meetings = None
-            window3.un_hide()
+            win_town_news.un_hide()
         
-    window1.close()
+    win_main.close()
 #===============================================================================
 
 
