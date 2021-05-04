@@ -334,7 +334,7 @@ def scrape_all():
 #===============================================================================
 # If run as main file functions
 #===============================================================================
-# If this file is run as the main file, then it call a function. This was used
+# If this file is run as the main file, then it calls a function. This was used
 #   for testing and when working through the data parsing.
 if __name__ == '__main__':
     # scrape_edison_town_meetings()

@@ -253,12 +253,17 @@ def make_town_news_window():
 
 
 #===============================================================================
+# Function to make the town department info window.
 def make_town_department_window():
+    # Get the web data
     town_dept_contacts = scrape.parse_edison_department_contacts()
 
+    # Variable to hold the constructed GUI elements
     town_dept_contacts_content = []
-    # town_dept_contacts_content.append([sg.Text('Edison Township Dept. Info')])
 
+    # For each row of the department info table, grab the text from each 
+    #   item in the row and then append the row and a separator to the 
+    #   content list.
     for table_entry in town_dept_contacts:
         row = []
         
@@ -269,7 +274,8 @@ def make_town_department_window():
         town_dept_contacts_content.append([sg.Column([row])])
         town_dept_contacts_content.append([sg.HorizontalSeparator()])
 
-
+    # Variable containing the total layout for the page. Combines the generic 
+    #   layouts from the CL_layouts file and the window specific layouts.
     layout = [
         layouts.create_top_banner(back_button=True),
         [
@@ -285,24 +291,42 @@ def make_town_department_window():
                 ])
             ]], expand_x=True)
         ],
-        [sg.Column([[sg.Text('Edison Township Dept. Contact Info', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
-        [sg.Column(town_dept_contacts_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
+        [sg.Column([
+            [sg.Text('Edison Township Dept. Contact Info', 
+                font='Any 18', background_color=DARK_HEADER_COLOR
+            )]
+        ], background_color=DARK_HEADER_COLOR, expand_x=True)],
+
+        [sg.Column(
+            town_dept_contacts_content, expand_x=True, expand_y=True, 
+            scrollable=True, vertical_scroll_only=True, 
+            vertical_alignment='top', size=(540, 300)
+        )],
         layouts.create_footer()
     ]
 
-    return sg.Window('Get Involved NJ - County Information', layout, size=(720, 540), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+    # Return a window object containing the finalized layout.
+    return sg.Window(
+        'Get Involved NJ - County Information', layout, size=(720, 540), 
+        margins=(0,0), finalize=True, background_color=BORDER_COLOR, 
+        no_titlebar=False, grab_anywhere=False
+    )
 #===============================================================================
 
 
 #===============================================================================
+# Function to make the town meeting info window.
 def make_town_meeting_window():
+    # Get the web data
     town_meetings = scrape.parse_edison_town_meetings()
 
+    # Variable to hold the constructed GUI elements
     town_meetings_content = []
-    # town_meetings_content.append([sg.Text('Edison Township Meeting Info')])
 
+    # For each row in the town meeting table, create a row and append the
+    #   meeting title, date, link, meeting ID and passcode. The append the
+    #   row and a separator to the content list.
     for table_entry in town_meetings:
-        print(table_entry)
         row = []
         
         row.append([sg.Text(table_entry[0]), sg.Text(table_entry[1])])
@@ -314,7 +338,8 @@ def make_town_meeting_window():
         town_meetings_content.append([sg.Column(row)])
         town_meetings_content.append([sg.HorizontalSeparator()])
 
-
+    # Variable containing the total layout for the page. Combines the generic 
+    #   layouts from the CL_layouts file and the window specific layouts.
     layout = [
         layouts.create_top_banner(back_button=True),
         [
@@ -330,28 +355,53 @@ def make_town_meeting_window():
                 ])
             ]], expand_x=True)
         ],
-        [sg.Column([[sg.Text('Edison Township Meeting Info', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
-        [sg.Column(town_meetings_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
+        [sg.Column([
+            [sg.Text('Edison Township Meeting Info', font='Any 18', 
+                background_color=DARK_HEADER_COLOR
+            )]
+        ], background_color=DARK_HEADER_COLOR, expand_x=True)],
+
+        [sg.Column(
+            town_meetings_content, expand_x=True, expand_y=True, 
+            scrollable=True, vertical_scroll_only=True, 
+            vertical_alignment='top', size=(540, 300)
+        )],
         layouts.create_footer()
     ]
 
-    return sg.Window('Get Involved NJ - County Information', layout, size=(720, 540), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+    # Return a window object containing the finalized layout.
+    return sg.Window(
+        'Get Involved NJ - County Information', layout, size=(720, 540), 
+        margins=(0,0), finalize=True, background_color=BORDER_COLOR, 
+        no_titlebar=False, grab_anywhere=False
+    )
 #===============================================================================
 
 
 #===============================================================================
+# Function to make the progress window that displays the scraping progress when
+#   app first loads.
 def make_progress_window():
 
+    # Variable containing the total layout for the window.
     layout = [
         [sg.Column([
             [sg.Text('Gathering data...', font='Any 20')],
             [sg.Text('Please wait.', font='Any 20')],
         ], expand_x=True, expand_y=True, element_justification='center')],
         
-        [sg.ProgressBar(len(scrape.scrape_functions) - 1, key='PROGRESS_BAR', size=(100, 20))]
+        [sg.ProgressBar(
+            len(scrape.scrape_functions) - 1, 
+            key='PROGRESS_BAR', size=(100, 20)
+        )]
     ]
 
-    return sg.Window('Get Involved NJ - County Information', layout, size=(360, 150), margins=(0,0), finalize=True, background_color=BORDER_COLOR, no_titlebar=False, grab_anywhere=False)
+    # Return a window object containing the finalized layout.
+    return sg.Window(
+        'Get Involved NJ - County Information', layout, size=(360, 150), 
+        margins=(0,0), finalize=True, background_color=BORDER_COLOR, 
+        no_titlebar=False, grab_anywhere=False
+    )
 
 #===============================================================================
 
@@ -392,11 +442,15 @@ def main():
         window, event, values = sg.read_all_windows(timeout=100)
 
         # Event handlers
+        # ======================================================================
         # 1st Level
         if window == win_main:
+            # Handle window close an quit events
             if event in (sg.WIN_CLOSED, 'Quit'):
                 break
 
+            # Handle 'Middlesex' button press. 
+            #   Hide 1st Level window, create 2nd level window.
             if event == 'Middlesex':
                 win_main.hide()
                 win_county = make_county_window()
@@ -405,15 +459,21 @@ def main():
         
         # 2nd Level
         if window == win_county:
+            # Handle window close an quit events
             if event in (sg.WIN_CLOSED, 'Quit'):
                 break
 
+            # Handle 'Back' and 'Home' buttons being pressed.
+            #   Hide 2nd level windows, un_hide 1st level window, then close and
+            #   destroy 2nd level windows.
             if event in ('Back', 'Home'):
                 win_county.hide()
                 win_main.un_hide()
                 win_county.close()
                 win_county = None
 
+            # Handle 'Edison' button press.
+            #   Hide 2nd level window, create 3rd level window.
             if event == 'Edison':
                 win_county.hide()
                 win_town_news = make_town_news_window()
@@ -421,9 +481,13 @@ def main():
 
         # 3rd Level
         if window in (win_town_dept, win_town_news, win_town_meetings):
+            # Handle window close an quit events
             if event in (sg.WIN_CLOSED, 'Quit'):
                break
 
+            # Handle 'Back' button press.
+            #   Hide 3rd level window, un_hide 2nd level window, then close and
+            #   destroy all 3rd level windows.
             if event == 'Back':
                 window.hide()
                 win_county.un_hide()
@@ -432,6 +496,9 @@ def main():
                 win_town_meetings = None
                 win_town_news = None
 
+            # Handle 'Home' button press.
+            #   Hide 3rd level window, un_hide 1st level window, then close and
+            #   destroy all 2nd and 3rd level windows.
             if event == 'Home':
                 window.hide()
                 win_main.un_hide()
@@ -442,6 +509,10 @@ def main():
                 win_town_news = None
                 win_county = None
 
+            # Handle 'News' button press.
+            #   If current window is NOT the news window then hide current 3rd 
+            #   level window, create news 3rd level window, close and destroy 
+            #   all other 3rd level windows.
             if event == 'News' and window != win_town_news:
                 window.hide()
                 win_town_news = make_town_news_window()
@@ -449,6 +520,10 @@ def main():
                 win_town_dept = None
                 win_town_meetings = None
 
+            # Handle 'Dept. Info' button press.
+            #   If current window is NOT the dept. info window then hide current 
+            #   3rd level window, create dept. info 3rd level window, then
+            #   close and destroy all other 3rd level windows.
             if event == 'Dept. Info' and window != win_town_dept:
                 window.hide()
                 win_town_dept = make_town_department_window()
@@ -456,6 +531,11 @@ def main():
                 win_town_meetings = None
                 win_town_news = None
 
+            # Handle 'Town Meeting Info' button press.
+            #   If current window is NOT the town meeting info window then 
+            #   hide the current 3rd level window, create town meeting info
+            #   3rd level window, then close and destroy all other 3rd level 
+            #   windows.
             if event == 'Town Meeting Info' and window != win_town_meetings:
                 window.hide()
                 win_town_meetings = make_town_meeting_window()
@@ -463,11 +543,15 @@ def main():
                 win_town_dept = None
                 win_town_news = None
         
+    # Close the main window after the event loop ends.
     win_main.close()
 #===============================================================================
 
 
 #===============================================================================
+# If run as main file functions
+#===============================================================================
+# If this file is run as the main file, it starts the app event loop.
 if __name__ == '__main__':
     main()
 #===============================================================================
