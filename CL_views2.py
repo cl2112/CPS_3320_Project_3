@@ -13,6 +13,7 @@
 #===============================================================================
 # The PySimpleGUI library used to render GUIs
 from tkinter import font
+from tkinter.constants import W
 import PySimpleGUI as sg
 
 # Importing the layout functions that create layout pieces
@@ -127,7 +128,7 @@ def make_county_window():
         county_news_content.append([sg.HorizontalSeparator()])
 
     layout = [
-        layouts.create_top_banner(),
+        layouts.create_top_banner(back_button=True),
         # layouts.create_heading(),
         [
             sg.Column([
@@ -159,7 +160,7 @@ def make_town_news_window():
         content.append([sg.Text(story['text'])])
 
     layout = [
-        layouts.create_top_banner(),
+        layouts.create_top_banner(back_button=True),
         [
             sg.Column([[
                 sg.Column([
@@ -204,7 +205,7 @@ def make_town_department_window():
 
 
     layout = [
-        layouts.create_top_banner(),
+        layouts.create_top_banner(back_button=True),
         [
             sg.Column([[
                 sg.Column([
@@ -249,7 +250,7 @@ def make_town_meeting_window():
 
 
     layout = [
-        layouts.create_top_banner(),
+        layouts.create_top_banner(back_button=True),
         [
             sg.Column([[
                 sg.Column([
@@ -290,7 +291,10 @@ def make_progress_window():
 
 
 #===============================================================================
+# Function that contains all of the event logic that handles the transitions
+#   between the windows.
 def main():
+    # Variables for storing the created windows.
     win_town_meetings = None
     win_town_dept = None
     win_town_news = None
@@ -298,62 +302,146 @@ def main():
     win_main = None
     win_progress = make_progress_window()
 
+    # Execute each of the scrape functions while updating the progress bar on
+    #   the progress window.
     for i in range(len(scrape.scrape_functions)):
         scrape.scrape_functions[i]()
         win_progress['PROGRESS_BAR'].update(i)
         time.sleep(1)
 
+    # Hide the progress window
     win_progress.hide()
+
+    # Create the main window
     win_main = make_main_window()
+
+    # Close and Destroy the progress window
+    win_progress.close()
     win_progress = None
 
+    # Always running event loop that catches all of the events fired by
+    #   the windows.
     while True:
+        # Funtion that reads any events fired by the windows. The timeout 
+        #   field determines how often it will check for new events.
         window, event, values = sg.read_all_windows(timeout=100)
 
-        if event in (sg.WIN_CLOSED, 'Quit') and window == win_main:
-            break
-
+        # Event handlers
+        # 1st Level
         if window == win_main:
-            pass
+            if event in (sg.WIN_CLOSED, 'Quit'):
+                break
 
-        if event == 'Middlesex' and not win_county and not win_town_news:
-            win_main.hide()
-            win_county = make_county_window()
-            print(win_county)
+            if event == 'Middlesex':
+                win_main.hide()
+                win_county = make_county_window()
+                # Now in 2nd Level
 
-        if event == 'Edison':
-            print(window, event)
-            win_county.hide()
-            win_town_news = make_town_news_window()
+        
+        # 2nd Level
+        if window == win_county:
+            if event in (sg.WIN_CLOSED, 'Quit'):
+                break
+
+            if event in ('Back', 'Home'):
+                win_county.hide()
+                win_main.un_hide()
+                win_county.close()
+                win_county = None
+
+            if event == 'Edison':
+                win_county.hide()
+                win_town_news = make_town_news_window()
+                # Now in 3rd Level
+
+        # 3rd Level
+        if window in (win_town_dept, win_town_news, win_town_meetings):
+            if event in (sg.WIN_CLOSED, 'Quit'):
+               break
+
+            if event == 'Back':
+                window.hide()
+                win_county.un_hide()
+                window.close()
+                win_town_dept = None
+                win_town_meetings = None
+                win_town_news = None
+
+            if event == 'Home':
+                window.hide()
+                win_main.un_hide()
+                win_county.close()
+                window.close()
+                win_town_dept = None
+                win_town_meetings = None
+                win_town_news = None
+                win_county = None
+
+            if event == 'News' and window != win_town_news:
+                window.hide()
+                win_town_news = make_town_news_window()
+                window.close()
+                win_town_dept = None
+                win_town_meetings = None
+
+            if event == 'Dept. Info' and window != win_town_dept:
+                window.hide()
+                win_town_dept = make_town_department_window()
+                window.close()
+                win_town_meetings = None
+                win_town_news = None
+
+            if event == 'Town Meeting Info' and window != win_town_meetings:
+                window.hide()
+                win_town_meetings = make_town_meeting_window()
+                window.close()
+                win_town_dept = None
+                win_town_news = None
+
+        # if event in (sg.WIN_CLOSED, 'Quit') and window == win_main:
+        #     break
+
+        # if window == win_main:
+        #     pass
+
+        # if event == 'Middlesex' and not win_county and not win_town_news:
+        #     win_main.hide()
+        #     win_county = make_county_window()
+        #     print(win_county)
+
+        # if event == 'Edison':
+        #     print(window, event)
+        #     win_county.hide()
+        #     win_town_news = make_town_news_window()
 
 
-        if window == win_county and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
-            win_county.close()
-            win_county = None
-            win_main.un_hide()
+        # if window == win_county and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
+        #     win_county.close()
+        #     win_county = None
+        #     win_main.un_hide()
 
-        if window == win_town_news and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
-            win_town_news.close()
-            win_town_news = None
-            win_county.un_hide()
+        # if window == win_town_news and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):
+        #     win_town_news.close()
+        #     win_town_news = None
+        #     win_county.un_hide()
 
-        if window == win_town_news and event == 'Dept. Info':
-            win_town_news.hide()
-            win_town_dept = make_town_department_window()
+        # if window == win_town_news and event == 'Dept. Info':
+        #     win_town_news.hide()
+        #     win_town_dept = make_town_department_window()
 
-        if window in (win_town_news, win_town_dept) and event == 'Town Meeting Info':
-            window.hide()
-            win_town_meetings = make_town_meeting_window()
+        # if window in (win_town_news, win_town_dept) and event == 'Town Meeting Info':
+        #     window.hide()
+        #     win_town_meetings = make_town_meeting_window()
 
-        if window == win_town_dept and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
-            win_town_dept.close()
-            win_town_dept = None
-            win_town_news.un_hide()
+        # if window == win_town_dept and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
+        #     win_town_dept.close()
+        #     win_town_dept = None
+        #     win_town_news.un_hide()
 
-        if window == win_town_meetings and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
-            win_town_meetings.close()
-            win_town_meetings = None
-            win_town_news.un_hide()
+        # if window == win_town_meetings and event in (sg.WIN_CLOSED, 'Quit', 'Home'):
+        #     win_town_meetings.close()
+        #     win_town_meetings = None
+        #     win_town_news.un_hide()
         
     win_main.close()
 #===============================================================================

@@ -40,11 +40,24 @@ BPAD_RIGHT = ((10,20), (10, 20))
 
 # Function to create the top banner of the UI. It is like the main menu of the
 #   app.
-def create_top_banner():
+def create_top_banner(back_button=False):
     # The top banner is made up of two columns, one with the text of the 
     #   app and the other holds the buttons for the different options. Then,
     #   both of those columns are joined inside of another column that 
     #   makes up the top row of the GUI.
+    if back_button:
+        buttons = sg.Column([
+                [sg.Button('Home'), 
+                sg.Button('Back'),
+                sg.Button('Quit')]
+            ], background_color=DARK_HEADER_COLOR)
+    else:
+        buttons = sg.Column([
+                [sg.Button('Home'), 
+                sg.Button('Quit')]
+            ], background_color=DARK_HEADER_COLOR)
+
+    
     top_banner = [
         [
             sg.Column([
@@ -55,10 +68,11 @@ def create_top_banner():
                     enable_events=True)]
             ],expand_x=True, background_color=DARK_HEADER_COLOR),
             
-            sg.Column([
-                [sg.Button('Home'), 
-                sg.Button('Quit')]
-            ], background_color=DARK_HEADER_COLOR)
+            buttons
+            # sg.Column([
+            #     [sg.Button('Home'), 
+            #     sg.Button('Quit')]
+            # ], background_color=DARK_HEADER_COLOR)
         ]
     ]
 
