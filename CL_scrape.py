@@ -24,8 +24,7 @@ import CL_data_objects as do
 #===============================================================================
 # State Functions
 #===============================================================================
-# Variables to store the NJ state web site links.
-
+# Variable to store the NJ state web site link.
 New_Jersey_state_news_link = \
     'https://nj.gov/governor/news/news/562021/approved/news_archive.shtml'
 
@@ -59,7 +58,7 @@ def parse_state_news():
     # Organize the data with beautiful soup
     parsed_data = BeautifulSoup(web_page, 'html.parser')
 
-    # Grab all of the divs with a class or 'press-item'
+    # Grab all of the divs with a class of 'press-item'
     parsed_data = parsed_data.find_all('div', class_='press-item')
 
     # Variable to store the processed data
@@ -110,15 +109,23 @@ def scrape_middlesex_county_news():
 
 
 #===============================================================================
+# Function to parse and organize the Middlesex county news from the web page.
 def parse_middlesex_county_news():
+    # Open the file with the scraped data
     web_page = open('./scraped_html/middlesex_county_news.html')
 
+    # Organize the data with beautiful soup
     parsed_data = BeautifulSoup(web_page, 'html.parser')
 
+    # Grab all of the divs with a class of 'news'
     news_items = parsed_data.find_all('div', class_='news')
 
+    # Variable to store the processed data
     middlesex_county_news = []
 
+    # For each div grabbed, get the text and link from the child anchor element,
+    #   and get the text from the child span element. The append the contents
+    #   of the div to the list.
     for item in news_items:
         data = {}
 
@@ -192,24 +199,6 @@ def parse_edison_news():
     return town_news
 #===============================================================================
 
-
-
-
-# def get_data():
-
-#     news_data = request.urlopen(Edison_Twsp.links['news'])
-
-
-#     parsed_data = BeautifulSoup(news_data, 'html.parser').select('div.post p')
-#     for story in parsed_data:
-#         print('''
-#             link: 'https://edisonnj.org/{}'
-#             text: {}
-#         '''.format(story.a['href'].replace(' ', '%20'), story.text))
-
-#         Edison_Twsp.news.append({'link':story.a['href'].replace(' ', '%20'), 'text':story.text})
-
-#     return Edison_Twsp
 
 #===============================================================================
 # Function to download the web page with the Edison Twsp. town meeting info.
@@ -322,11 +311,10 @@ def parse_edison_department_contacts():
 #===============================================================================
 
 
-
-
-
 #===============================================================================
-# List that stores references to each of the scraping functions.
+# List that stores references to each of the scraping functions. The Middlesex 
+#   county news is scraped manually because the way the web site renders the
+#   data dynamically. 
 scrape_functions = [
     scrape_state_news,
     # scrape_middlesex_county_news,
@@ -344,8 +332,10 @@ def scrape_all():
 
 
 #===============================================================================
-
+# If run as main file functions
 #===============================================================================
+# If this file is run as the main file, then it call a function. This was used
+#   for testing and when working through the data parsing.
 if __name__ == '__main__':
     # scrape_edison_town_meetings()
     # parse_edison_town_meetings()
