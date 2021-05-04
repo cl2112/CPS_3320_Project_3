@@ -51,7 +51,7 @@ def make_main_window():
     state_news = scrape.parse_state_news()
 
     state_news_content = []
-    state_news_content.append([sg.Text('New Jersey State News', font='Any 20')])
+    # state_news_content.append([sg.Text('New Jersey State News', font='Any 20')])
     
     for story in state_news:
         row = []
@@ -76,13 +76,14 @@ def make_main_window():
         [
             sg.Column([
                 [sg.Column([
-                    [sg.Text('Counties', font='Any 16')]
+                    [sg.Text('Counties:', font='Any 16')]
                 ], expand_x=True), 
                 sg.Column([
                     [sg.Button('Middlesex')]
                 ])]
             ], expand_x=True)
         ],
+        [sg.Column([[sg.Text('New Jersey State News', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
         [sg.Column(state_news_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -93,7 +94,7 @@ def make_main_window():
 
 #===============================================================================
 
-def make_town_window():
+def make_town_news_window():
     content = []
 
     Edison = scrape.parse_edison_news()
@@ -117,7 +118,7 @@ def make_county_window():
     county_news = scrape.parse_middlesex_county_news()
 
     county_news_content = []
-    county_news_content.append([sg.Text('Middlesex County News')])
+    # county_news_content.append([sg.Text('Middlesex County News')])
 
     for story in county_news:
         row = []
@@ -148,6 +149,7 @@ def make_county_window():
                 ])]
             ], expand_x=True)
         ],
+        [sg.Column([[sg.Text('Middlesex County News', font='Any 18', background_color=DARK_HEADER_COLOR)]], expand_x=True, background_color=DARK_HEADER_COLOR)],
         [sg.Column(county_news_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -246,7 +248,7 @@ def main():
         if event == 'Edison':
             print(window, event)
             window2.hide()
-            window3 = make_town_window()
+            window3 = make_town_news_window()
 
 
         if window == window2 and (event in (sg.WIN_CLOSED, 'Quit', 'Home')):

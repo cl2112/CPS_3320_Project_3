@@ -116,7 +116,7 @@ def create_footer():
         [sg.Text(
             'Created by Christian Liguori for CPS 3320' + 
             ' @ Kean University - 05/05/21'
-        ,background_color=DARK_HEADER_COLOR, font='Any 12')]
+        ,background_color=DARK_HEADER_COLOR, font='Any 10')]
     ]
 
     return [sg.Column(footer, expand_x=True, element_justification='c', 
