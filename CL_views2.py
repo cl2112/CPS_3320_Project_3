@@ -12,6 +12,7 @@
 # Library Imports
 #===============================================================================
 import PySimpleGUI as sg
+from PySimpleGUI.PySimpleGUI import Column
 
 import CL_layouts as layouts
 
@@ -57,13 +58,13 @@ def make_main_window():
         row.append([sg.Text(story['date'])])
         chara_count = 0
         while chara_count < len(story['text']):
-            cut_text = story['text'][chara_count: chara_count+80]
+            cut_text = story['text'][chara_count: chara_count+100]
             # print('\nstory', story['text'], '\ncut_text', cut_text)
         
             row.append(
                 [sg.Text(cut_text)]
             )
-            chara_count += 80
+            chara_count += 100
 
         state_news_content.append([sg.Column(row)])
         state_news_content.append([sg.HorizontalSeparator()])
@@ -71,8 +72,17 @@ def make_main_window():
 
     layout = [
         layouts.create_top_banner(),
-        layouts.create_heading(),
-        [[sg.Text('Counties')], [sg.Button('Middlesex')]],
+        # layouts.create_heading(),
+        [
+            sg.Column([
+                [sg.Column([
+                    [sg.Text('Counties', font='Any 16')]
+                ], expand_x=True), 
+                sg.Column([
+                    [sg.Button('Middlesex')]
+                ])]
+            ], expand_x=True)
+        ],
         [sg.Column(state_news_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -127,8 +137,17 @@ def make_county_window():
 
     layout = [
         layouts.create_top_banner(),
-        layouts.create_heading(),
-        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        # layouts.create_heading(),
+        [
+            sg.Column([
+                [sg.Column([
+                    [sg.Text('Towns', font='Any 16')]
+                ], expand_x=True), 
+                sg.Column([
+                    [sg.Button('Edison')]
+                ])]
+            ], expand_x=True)
+        ],
         [sg.Column(county_news_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]

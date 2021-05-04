@@ -12,6 +12,7 @@
 # Library Imports
 #===============================================================================
 # The PySimpleGUI library used to render GUIs
+from tkinter import font
 import PySimpleGUI as sg
 #===============================================================================
 
@@ -115,8 +116,9 @@ def create_footer():
         [sg.Text(
             'Created by Christian Liguori for CPS 3320' + 
             ' @ Kean University - 05/05/21'
-        )]
+        ,background_color=DARK_HEADER_COLOR, font='Any 12')]
     ]
 
-    return [sg.Column(footer, expand_x=True, element_justification='c')]
+    return [sg.Column(footer, expand_x=True, element_justification='c', 
+    background_color=DARK_HEADER_COLOR)]
 #===============================================================================
