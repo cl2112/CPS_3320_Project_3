@@ -15,9 +15,6 @@ from bs4 import BeautifulSoup
 
 # request library used to download the site data
 from urllib import request
-
-# Import the data objects used to organize the data.
-import CL_data_objects as do
 #===============================================================================
 
 
