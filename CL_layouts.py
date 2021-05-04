@@ -2,7 +2,7 @@
 # Author: Christian Liguori
 # Date: 05/04/21
 # Program Name: CL_layouts.py
-# This file contains all functions to create the layouts that are used to 
+# This file contains all of the functions to create the layouts that are used to 
 #   create the windows of the GUI, except for the layouts used only in
 #   one window. 
 #===============================================================================
