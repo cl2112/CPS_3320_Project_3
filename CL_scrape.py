@@ -1,32 +1,52 @@
-# Beautiful Soup library that is used for scraping site data
+#===============================================================================
+# Author: Christian Liguori
+# Date: 05/04/21
+# Program Name: CL_scrape.py
+# This file contains all of the scrape and parsing functions that retrieve and
+#   organize the data for the app that comes from external sources.
+#===============================================================================
+
+
+#===============================================================================
+# Library Imports
+#===============================================================================
+# Beautiful Soup library that is used for parsing site data
 from bs4 import BeautifulSoup
+
 # request library used to download the site data
 from urllib import request
 
+# Import the data objects used to organize the data.
 import CL_data_objects as do
+#===============================================================================
 
 
+#===============================================================================
+# State Functions
+#===============================================================================
+# Variable to store the state data.
+New_Jersey = do.State('New Jersey')
+New_Jersey.links['news'] = \
+    'https://nj.gov/governor/news/news/562021/approved/news_archive.shtml'
 
-Edison_Twsp = do.Township('Edison')
+# Function to download the web page with the official state news.
+def scrape_state_news(state_do):
+    # Download the web page html
+    web_data = request.urlopen(state_do.links['news'])
 
-Edison_Twsp.links['news'] = 'https://edisonnj.org/newslist.php'
-Edison_Twsp.links['town_meetings'] = 'https://www.edisonnj.org/zoommeetings/index.php'
-Edison_Twsp.links['calendar'] = 'https://edisonnj.org/calendar.php'
-
-
-New_Jersey_News = 'https://nj.gov/governor/news/news/562021/approved/news_archive.shtml'
-
-def scrape_state_news():
-    web_data = request.urlopen(New_Jersey_News)
-
+    # Parse the data through beautiful soup to organize the raw html
     parsed_data = BeautifulSoup(web_data, 'html.parser')
 
+    # Create an html file to store the web data 
     file = open('./scraped_html/new_jersey_news.html', 'w')
     
+    # Write an organized version of the web data to the local file
     file.write(str(parsed_data.prettify()))
 
+    # Close the file to free up resources
     file.close()
 
+#
 def parse_state_news():
     web_page = open('./scraped_html/new_jersey_news.html')
 
@@ -50,6 +70,19 @@ def parse_state_news():
         state_news.append(data_row)
 
     return state_news
+
+
+
+Edison_Twsp = do.Township('Edison')
+
+Edison_Twsp.links['news'] = 'https://edisonnj.org/newslist.php'
+Edison_Twsp.links['town_meetings'] = 'https://www.edisonnj.org/zoommeetings/index.php'
+Edison_Twsp.links['calendar'] = 'https://edisonnj.org/calendar.php'
+
+
+
+
+
 
 
 
@@ -186,6 +219,17 @@ def parse_middlesex_county_news():
     return middlesex_county_news
 
 
+
+# List that stores references to each of the scraping functions.
+scrape_functions = [
+    scrape_state_news,
+    
+]
+
+# Function that calls all of the scrape functions .
+def scrape_all():
+    for func in scrape_functions:
+        func()
 
 
 if __name__ == '__main__':

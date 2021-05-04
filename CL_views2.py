@@ -69,7 +69,7 @@ def make_town_window():
     layout = [
         layouts.create_top_banner(),
         layouts.create_township_heading(Edison),
-        [sg.Column(content, expand_y=True, expand_x=True, scrollable=True, vertical_scroll_only=True)],
+        [sg.Column(content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
 

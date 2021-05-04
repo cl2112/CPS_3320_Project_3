@@ -10,19 +10,22 @@ class Data_Store():
         self.entity_name = entity_name
         self.link_dict = link_dict
 
+class State():
+    name = ''
+    links = {}
+    data = []
+
+class County():
+    name = ''
+    links = []
+    data = []
+
 class Township():
     name = ''
     departments = {}
-    links = {
-        'home': '',
-        'department_contact_info': '',
-        'town_meeting_info': '',
-        'agendas'
-        'news': '',
-        'elections:': '',
-
-    }
+    links = {}
     news = []
+    data = {}
 
     def __init__(self, name):
         self.name = name
