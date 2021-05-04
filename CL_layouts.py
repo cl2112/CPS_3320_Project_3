@@ -34,10 +34,10 @@ def create_heading():
 
     return [sg.Column(heading, expand_x=True)]
 
-def create_township_heading(township):
+def create_township_heading(township_name):
     heading = [
         [
-            sg.Column([[sg.Text(township.name, font='Any 20')]], expand_x=True),
+            sg.Column([[sg.Text(township_name, font='Any 20')]], expand_x=True),
             sg.Column([[sg.Button('News'), sg.Button('Dept. Info'), sg.Button('Town Meeting Info')]])
         ]
     ]

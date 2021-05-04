@@ -61,14 +61,14 @@ def make_main_window():
 def make_town_window():
     content = []
 
-    Edison = scrape.get_data()
+    Edison = scrape.parse_edison_news()
 
-    for story in Edison.news:
+    for story in Edison:
         content.append([sg.Text(story['text'])])
 
     layout = [
         layouts.create_top_banner(),
-        layouts.create_township_heading(Edison),
+        layouts.create_township_heading('Edison'),
         [sg.Column(content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -146,6 +146,7 @@ def make_town_meeting_window():
     town_meetings_content.append([sg.Text('Edison Township Meeting Info')])
 
     for table_entry in town_meetings:
+        print(table_entry)
         row = []
         
         row.append([sg.Text(table_entry[0]), sg.Text(table_entry[1])])
