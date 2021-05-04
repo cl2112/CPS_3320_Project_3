@@ -104,7 +104,20 @@ def make_town_news_window():
 
     layout = [
         layouts.create_top_banner(),
-        layouts.create_township_heading('Edison'),
+        [
+            sg.Column([[
+                sg.Column([
+                    [sg.Text('Edison', font='Any 16')]
+                ], expand_x=True),
+
+                sg.Column([
+                    [sg.Button('News'), 
+                    sg.Button('Dept. Info'), 
+                    sg.Button('Town Meeting Info')]
+                ])
+            ]], expand_x=True)
+        ],
+        [sg.Column([[sg.Text('Edison Township News', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
         [sg.Column(content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -163,7 +176,7 @@ def make_town_department_window():
     town_dept_contacts = scrape.parse_edison_department_contacts()
 
     town_dept_contacts_content = []
-    town_dept_contacts_content.append([sg.Text('Edison Township Dept. Info')])
+    # town_dept_contacts_content.append([sg.Text('Edison Township Dept. Info')])
 
     for table_entry in town_dept_contacts:
         row = []
@@ -178,8 +191,20 @@ def make_town_department_window():
 
     layout = [
         layouts.create_top_banner(),
-        layouts.create_heading(),
-        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        [
+            sg.Column([[
+                sg.Column([
+                    [sg.Text('Edison', font='Any 16')]
+                ], expand_x=True),
+
+                sg.Column([
+                    [sg.Button('News'), 
+                    sg.Button('Dept. Info'), 
+                    sg.Button('Town Meeting Info')]
+                ])
+            ]], expand_x=True)
+        ],
+        [sg.Column([[sg.Text('Edison Township Dept. Contact Info', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
         [sg.Column(town_dept_contacts_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
@@ -193,7 +218,7 @@ def make_town_meeting_window():
     town_meetings = scrape.parse_edison_town_meetings()
 
     town_meetings_content = []
-    town_meetings_content.append([sg.Text('Edison Township Meeting Info')])
+    # town_meetings_content.append([sg.Text('Edison Township Meeting Info')])
 
     for table_entry in town_meetings:
         print(table_entry)
@@ -211,8 +236,20 @@ def make_town_meeting_window():
 
     layout = [
         layouts.create_top_banner(),
-        layouts.create_heading(),
-        [[sg.Text('Townships')], [sg.Button('Edison')]],
+        [
+            sg.Column([[
+                sg.Column([
+                    [sg.Text('Edison', font='Any 16')]
+                ], expand_x=True),
+
+                sg.Column([
+                    [sg.Button('News'), 
+                    sg.Button('Dept. Info'), 
+                    sg.Button('Town Meeting Info')]
+                ])
+            ]], expand_x=True)
+        ],
+        [sg.Column([[sg.Text('Edison Township Meeting Info', font='Any 18', background_color=DARK_HEADER_COLOR)]], background_color=DARK_HEADER_COLOR, expand_x=True)],
         [sg.Column(town_meetings_content, expand_x=True, expand_y=True, scrollable=True, vertical_scroll_only=True, vertical_alignment='top', size=(540, 300))],
         layouts.create_footer()
     ]
